@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 
 from todo_app.flask_config import Config
 import todo_app.data.session_items as todoController
@@ -18,7 +18,8 @@ def add_new_todo():
     title = request.form['title']
     if title:
         todoController.add_item(title)
-        return index()
+        return redirect('/')
+    return render_template('error.html')
 
 if __name__ == '__main__':
     app.run()
