@@ -1,9 +1,11 @@
-from flask import session
+from requests import get, post, put
+from todo_app.flask_config import Config
+from todo_app.data.ToDoItem import ToDoItem 
 
-_DEFAULT_ITEMS = [
-    { 'id': 1, 'status': 'Not Started', 'title': 'List saved todo items' },
-    { 'id': 2, 'status': 'Not Started', 'title': 'Allow new items to be added' }
-]
+# Constants
+_BASE_PARAMS = {'key': Config.TRELLO_KEY, 'token': Config.TRELLO_TOKEN }
+_BOARD_BASE_URL = 'https://api.trello.com/1/boards/{}/cards'.format(Config.BOARD_ID)
+_CARDS_BASE_URL = 'https://api.trello.com/1/cards'
 
 
 def get_items():
@@ -13,8 +15,8 @@ def get_items():
     Returns:
         list: The list of saved items.
     """
-    return session.get('items', _DEFAULT_ITEMS.copy())
-
+    all_items = get(_BOARD_BASE_URL, params=_BASE_PARAMS)        
+    return [ToDoItem(item) for item in all_items.json()]
 
 def get_item(id):
     """
@@ -27,7 +29,7 @@ def get_item(id):
         item: The saved item, or None if no items match the specified ID.
     """
     items = get_items()
-    return next((item for item in items if item['id'] == int(id)), None)
+    return next((item for item in items if item.id == id), None)
 
 
 def add_item(title):
@@ -38,20 +40,12 @@ def add_item(title):
         title: The title of the item.
 
     Returns:
-        item: The saved item.
+        boolean: A boolean denoting whether the function succeeded or not.
     """
-    items = get_items()
-
-    # Determine the ID for the item based on that of the previously added item
-    id = items[-1]['id'] + 1 if items else 0
-
-    item = { 'id': id, 'title': title, 'status': 'Not Started' }
-
-    # Add the item to the list
-    items.append(item)
-    session['items'] = items
-
-    return item
+    responseBody = post(_CARDS_BASE_URL, params={ **_BASE_PARAMS, 'idList': Config.NOT_STARTED_LIST_ID, 'name': title })
+    if responseBody.status_code == 200:
+        return get_items()
+    return False
 
 
 def save_item(item):
@@ -59,11 +53,13 @@ def save_item(item):
     Updates an existing item in the session. If no existing item matches the ID of the specified item, nothing is saved.
 
     Args:
-        item: The item to save.
+        boolean: A boolean denoting whether the function succeeded or not.
     """
     existing_items = get_items()
-    updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
-
-    session['items'] = updated_items
-
-    return item
+    for current_item in existing_items:
+        if item.id == current_item.id:
+            item.moveItem()
+            responseBody = put(_CARDS_BASE_URL + '/' + item.id, params={ **_BASE_PARAMS, 'idList': item.listId})
+            if responseBody.status_code == 200:
+                return get_items()
+    return False
