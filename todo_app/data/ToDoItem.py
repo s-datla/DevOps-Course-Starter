@@ -1,7 +1,4 @@
-_BASE_LIST_ID = '60a6c184fd2064526bdf740'
-_NOT_STARTED_LIST_ID = 'b'
-_BEING_DONE_LIST_ID = 'c'
-_COMPLETED_LIST_ID = 'd'
+from todo_app.flask_config import Config
 
 class ToDoItem:
 
@@ -9,27 +6,26 @@ class ToDoItem:
         self.id = item['id']
         self.listId = item['idList']
         self.title = item['name']
-        self.transformStatus(item['idList'])
+        displayClass, status = ToDoItem.transformStatus(item['idList'])
+        self.displayClass = displayClass
+        self.status = status
 
-    def transformStatus(self, idList=None):
+    @staticmethod
+    def transformStatus(idList):
         """
         Transforms the idList attribute of the REST API payload into a readable status and displayClass.
         DisplayClass is used for determining the item class for html rendering.
         
         """
-        if not idList:
-            idList = self.listId 
-        idListEnding = idList[-1:] 
         status = 'Not Started'
         displayClass = ''
-        if idListEnding == _BEING_DONE_LIST_ID:
+        if idList == Config.BEING_DONE_LIST_ID:
             status = 'Being Done'
             displayClass = 'table-warning'
-        if idListEnding == _COMPLETED_LIST_ID:
+        if idList == Config.COMPLETED_LIST_ID:
             status = 'Completed'
             displayClass = 'table-success'
-        self.displayClass = displayClass
-        self.status = status
+        return displayClass, status
 
     def moveItem(self):
         """
@@ -39,11 +35,13 @@ class ToDoItem:
         Returns:
             idList: the id list for the next status.
         """
-        ending = _BEING_DONE_LIST_ID
-        if self.listId[-1:] == _BEING_DONE_LIST_ID:
-            ending = _COMPLETED_LIST_ID
-        if self.listId[-1:] == _COMPLETED_LIST_ID:
-            ending = _NOT_STARTED_LIST_ID
-        self.listId = _BASE_LIST_ID + ending
-        self.transformStatus()
+        listId = Config.BEING_DONE_LIST_ID
+        if self.listId == Config.BEING_DONE_LIST_ID:
+            listId = Config.COMPLETED_LIST_ID
+        if self.listId == Config.COMPLETED_LIST_ID:
+            listId = Config.NOT_STARTED_LIST_ID
+        self.listId = listId
+        displayClass, status = ToDoItem.transformStatus(listId)
+        self.displayClass = displayClass
+        self.status = status
     

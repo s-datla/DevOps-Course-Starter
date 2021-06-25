@@ -1,35 +1,22 @@
-from flask import Flask
 from requests import get, post, put
 from todo_app.flask_config import Config
 from todo_app.data.ToDoItem import ToDoItem 
 
-app = Flask(__name__)
-app.config.from_object(Config)
-
 # Constants
-_BASE_PARAMS = {'key': app.config['TRELLO_KEY'], 'token':app.config['TRELLO_TOKEN']}
-_BOARD_BASE_URL = 'https://api.trello.com/1/boards/GjbQrcgh/cards'
+_BASE_PARAMS = {'key': Config.TRELLO_KEY, 'token': Config.TRELLO_TOKEN }
+_BOARD_BASE_URL = 'https://api.trello.com/1/boards/{}/cards'.format(Config.BOARD_ID)
 _CARDS_BASE_URL = 'https://api.trello.com/1/cards'
 
 
-# Creating this local storage as session data must be serialisable which messes up with class methods
-class LocalItemList:
-    def __init__(self):
-        self.items = []
-
-localItemList = LocalItemList()
-
-def get_items(force_update=False):
+def get_items():
     """
     Fetches all saved items from the session.
 
     Returns:
         list: The list of saved items.
     """
-    if not localItemList.items or force_update:            
-        all_items = get(_BOARD_BASE_URL, params=_BASE_PARAMS)
-        localItemList.items = [ToDoItem(item) for item in all_items.json()]
-    return localItemList.items
+    all_items = get(_BOARD_BASE_URL, params=_BASE_PARAMS)        
+    return [ToDoItem(item) for item in all_items.json()]
 
 def get_item(id):
     """
@@ -55,9 +42,9 @@ def add_item(title):
     Returns:
         boolean: A boolean denoting whether the function succeeded or not.
     """
-    responseBody = post(_CARDS_BASE_URL, params={ **_BASE_PARAMS, 'idList':_BASE_LIST_ID + _NOT_STARTED_LIST_ID, 'name': title })
+    responseBody = post(_CARDS_BASE_URL, params={ **_BASE_PARAMS, 'idList': Config.NOT_STARTED_LIST_ID, 'name': title })
     if responseBody.status_code == 200:
-        return get_items(True)
+        return get_items()
     return False
 
 
@@ -74,5 +61,5 @@ def save_item(item):
             item.moveItem()
             responseBody = put(_CARDS_BASE_URL + '/' + item.id, params={ **_BASE_PARAMS, 'idList': item.listId})
             if responseBody.status_code == 200:
-                return get_items(True)
+                return get_items()
     return False
