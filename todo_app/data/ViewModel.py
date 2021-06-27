@@ -7,9 +7,9 @@ class ViewModel:
         return self._items
 
     def sortItems(self, key, reverse = False):
-        sortFunction = lambda x:x.title
-        if key == 'status':
-            sortFunction = lambda x: x.status
+        sortFunction = lambda x:x.status
+        if key == 'title':
+            sortFunction = lambda x: x.title
         self._items = sorted(self._items, key=sortFunction, reverse=reverse)
 
     @property
