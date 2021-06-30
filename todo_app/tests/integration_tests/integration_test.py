@@ -6,7 +6,7 @@ import json
 
 from todo_app.app import create_app
 from unittest.mock import patch, Mock
-from todo_app.tests.integration_tests.mock_responses import mock_all_cards_response, mock_new_card_response, mock_updated_card_response
+from todo_app.tests.integration_tests.mock_responses import *
 
 @fixture
 def client():
@@ -57,6 +57,16 @@ def test_add_item_endpoint(mock_get_requests, mock_post_requests, client):
         assert response.status_code == 302
         assert len(templates) == 0
 
+@patch('requests.delete')
+@patch('requests.get')
+def test_delete_item_endpoint(mock_get_requests, mock_delete_requests, client):
+    mock_delete_requests.side_effect = mock_delete_existing_card
+    mock_get_requests.side_effect = mock_get_all_cards
+    with captured_templates(client) as templates:
+        response = client.test_client().get('/delete/MockId1')
+        assert response.status_code == 302
+        assert len(templates) == 0
+
 @patch('requests.put')
 @patch('requests.get')
 def test_move_item_endpoint(mock_get_requests, mock_put_requests, client):
@@ -89,6 +99,15 @@ def mock_put_updated_card(url, params):
         response = Mock()
     # sample_trello_lists_response should point to some test response data
         response.json.return_value = json.loads(mock_updated_card_response)
+        response.status_code = 200
+        return response
+    return None
+
+def mock_delete_existing_card(url, params):
+    if url == 'https://api.trello.com/1/cards/MockId1':
+        response = Mock()
+    # sample_trello_lists_response should point to some test response data
+        response.json.return_value = json.loads(mock_deleted_card_response)
         response.status_code = 200
         return response
     return None

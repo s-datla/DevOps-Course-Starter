@@ -15,16 +15,22 @@
         <thead>
           <tr>
             <th scope="col">Title</th>
-            <th scope="col">Actions</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
           {% for item in view_model.notStartedItems %}
-          <tr class={{ item.displayClass }}>
+          <tr name="not-started-item" id="{{ item.id }}" class={{ item.displayClass }}>
             <th scope="row">{{ item.title }}</th>
             <td>
               <form action="/move/{{ item.id }}">
-                <input class="btn btn-primary" type="submit" name="move" value="Move">
+                <input id="move-button-{{ item.id }}" class="btn btn-primary" type="submit" name="move" value="Move">
+              </form>
+            </td>
+            <td>
+              <form action="/delete/{{ item.id }}">
+                <input id="delete-button-{{ item.id }}" class="btn btn-danger" type="submit" name="delete" value="Delete">
               </form>
             </td>
           </tr>
@@ -37,16 +43,22 @@
         <thead>
           <tr>
             <th scope="col">Title</th>
-            <th scope="col">Actions</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
           {% for item in view_model.beingDoneItems %}
-          <tr class={{ item.displayClass }}>
+          <tr name="being-done-item" id="{{ item.id }}" class={{ item.displayClass }}>
             <th scope="row">{{ item.title }}</th>
             <td>
               <form action="/move/{{ item.id }}">
-                <input class="btn btn-primary" type="submit" name="move" value="Move">
+                <input id="move-button-{{ item.id }}" class="btn btn-primary" type="submit" name="move" value="Move">
+              </form>
+            </td>
+            <td>
+              <form action="/delete/{{ item.id }}">
+                <input id="delete-button-{{ item.id }}" class="btn btn-danger" type="submit" name="delete" value="Delete">
               </form>
             </td>
           </tr>
@@ -59,18 +71,25 @@
         <thead>
           <tr>
             <th scope="col">Title</th>
-            <th scope="col">Actions</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
           {% for item in view_model.completedItems %}
-          <tr class={{ item.displayClass }}>
+          <tr name="completed-item" id="{{ item.id }}" class={{ item.displayClass }}>
             <th scope="row">{{ item.title }}</th>
             <td>
               <form action="/move/{{ item.id }}">
-                <input class="btn btn-primary" type="submit" name="move" value="Move">
+                <input id="move-button-{{ item.id }}" class="btn btn-primary" type="submit" name="move" value="Move">
               </form>
             </td>
+            <td>
+              <form action="/delete/{{ item.id }}">
+                <input id="delete-button-{{ item.id }}" class="btn btn-danger" type="submit" name="delete" value="Delete">
+              </form>
+            </td>
+
           </tr>
         {% endfor %}
         </tbody>
@@ -82,7 +101,7 @@
     <form method="post">
       <p>Title: <input type="text" id='title' name='title' required></p>
       <div>
-        <input type="submit" name="submit" value="Submit">
+        <input type="submit" id='submit-button' name="submit" value="Submit">
       </div>
     </form>
   </div>

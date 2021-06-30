@@ -30,9 +30,16 @@ def create_app():
             if not item == None:
                 if todoController.save_item(item):
                     return redirect('/')
-        return render_template('error.html')
-    
+        return render_template('error.html')    
+
+    @app.route('/delete/<id>')
+    def deleteToDo(id):
+        if id:
+            if todoController.delete_item(id):
+                return redirect('/')
+        return render_template('error.html')    
     return app
+
 
 if __name__ == '__main__':
     app = create_app()

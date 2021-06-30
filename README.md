@@ -62,4 +62,16 @@ To run individual tests, please use the following command:
 $ poetry run pytest PATH\TO\<FILE_NAME>
 ```
 
+## Selenium Testing
+
+To enable selenium to work, you need to follow the instructions below to enable selenium to use chrome to begin testing:
+1: [ChromeDriverWebsite](https://chromedriver.chromium.org/)
+2: [Setup Instructions](https://www.browserstack.com/guide/run-selenium-tests-using-selenium-chromedriver)
+
+If you are using WSL2 or a VM to run a Unix Distro, make sure you have a GUI service like [VcXsrv](https://sourceforge.net/projects/vcxsrv/) to show a GUI for selenium to load if you are ssh'ed in
+You would also need the following display environment property in your bash / zsh profile:
+```
+$ export DISPLAY=$(ip route | awk '{print $3; exit}'):0
+```
+
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.

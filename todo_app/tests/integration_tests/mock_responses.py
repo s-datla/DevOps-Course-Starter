@@ -31,3 +31,9 @@ mock_updated_card_response = """
     "name": "Fourth Mock Card"
   }
 """
+
+mock_deleted_card_response = """
+  {
+    "value": "success"
+  }
+"""

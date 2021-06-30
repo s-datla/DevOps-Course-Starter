@@ -59,3 +59,16 @@ def save_item(item):
             if response.status_code == 200:
                 return get_items()
     return False
+
+def delete_item(id):
+    """
+    Updates an existing item in the session. If no existing item matches the ID of the specified item, nothing is saved.
+
+    Args:
+        boolean: A boolean denoting whether the function succeeded or not.
+    """
+    existing_items = get_items()
+    response = apiClient.deleteItem(id)
+    if response.status_code == 200:
+        return get_items()
+    return False
