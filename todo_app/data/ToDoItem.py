@@ -1,4 +1,5 @@
 from todo_app.flask_config import Config
+import os
 
 class ToDoItem:
 
@@ -19,10 +20,10 @@ class ToDoItem:
         """
         status = 'Not Started'
         displayClass = ''
-        if idList == Config.BEING_DONE_LIST_ID:
+        if idList == os.getenv('BEING_DONE_LIST_ID'):
             status = 'Being Done'
             displayClass = 'table-warning'
-        if idList == Config.COMPLETED_LIST_ID:
+        if idList == os.getenv('COMPLETED_LIST_ID'):
             status = 'Completed'
             displayClass = 'table-success'
         return displayClass, status
@@ -35,11 +36,11 @@ class ToDoItem:
         Returns:
             idList: the id list for the next status.
         """
-        listId = Config.BEING_DONE_LIST_ID
-        if self.listId == Config.BEING_DONE_LIST_ID:
-            listId = Config.COMPLETED_LIST_ID
-        if self.listId == Config.COMPLETED_LIST_ID:
-            listId = Config.NOT_STARTED_LIST_ID
+        listId = os.getenv('BEING_DONE_LIST_ID')
+        if self.listId == os.getenv('BEING_DONE_LIST_ID'):
+            listId = os.getenv('COMPLETED_LIST_ID')
+        if self.listId == os.getenv('COMPLETED_LIST_ID'):
+            listId = os.getenv('NOT_STARTED_LIST_ID')
         self.listId = listId
         displayClass, status = ToDoItem.transformStatus(listId)
         self.displayClass = displayClass

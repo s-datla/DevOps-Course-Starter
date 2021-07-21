@@ -30,7 +30,7 @@ You'll also need to clone a new `.env` file from the `.env.template` to store lo
 $ cp .env.template .env  # (first time only)
 ```
 
-The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also the [TRELLO_KEY](https://developer.atlassian.com/cloud/trello/rest/api-group-actions/) and [TRELLO_TOKEN](https://developer.atlassian.com/cloud/trello/rest/api-group-actions/) variables which are used to authorize the trello board api requests.
+The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also the [TRELLO_KEY](https://developer.atlassian.com/cloud/trello/rest/api-group-actions/) and [TRELLO_TOKEN](https://developer.atlassian.com/cloud/trello/rest/api-group-actions/) variables which are used to authorize the trello board api requests. Please make sure you enter all values into the environment variables file.
 
 ## Running the App
 
@@ -49,4 +49,29 @@ You should see output similar to the following:
  * Debugger is active!
  * Debugger PIN: 226-556-590
 ```
+
+## Testing the Application
+
+Once you have installed all the dependencies and initialised all the environment variables, you can run the testing suites by running:
+```bash
+$ poetry run pytest
+```
+
+To run individual tests, please use the following command:
+```bash
+$ poetry run pytest PATH\TO\<FILE_NAME>
+```
+
+## Selenium Testing
+
+To enable selenium to work, you need to follow the instructions below to enable selenium to use chrome to begin testing:
+1: [ChromeDriverWebsite](https://chromedriver.chromium.org/)
+2: [Setup Instructions](https://www.browserstack.com/guide/run-selenium-tests-using-selenium-chromedriver)
+
+If you are using WSL2 or a VM to run a Unix Distro, make sure you have a GUI service like [VcXsrv](https://sourceforge.net/projects/vcxsrv/) to show a GUI for selenium to load if you are ssh'ed in
+You would also need the following display environment property in your bash / zsh profile:
+```
+$ export DISPLAY=$(ip route | awk '{print $3; exit}'):0
+```
+
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
