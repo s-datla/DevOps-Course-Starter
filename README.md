@@ -75,3 +75,32 @@ $ export DISPLAY=$(ip route | awk '{print $3; exit}'):0
 ```
 
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Docker
+
+This application has a dockerfile and can be run if you have Docker installed.
+As a pre-requisite please make sure to install Docker from (HERE)[https://docs.docker.com/get-docker/]
+
+There are 2 configurations that are possible to run, a production environment build and a development build. In order to proceed to this next step please make sure that you have followed the previous steps and have verified that the application can run locally (assuming the secrets `.env` has been correctly populated).
+Once this has been confirmed, to build the docker image please run:
+
+For development:
+
+```bash
+$ docker build --target development --tag todo-app:dev .
+```
+
+For production:
+```bash
+$ docker build --target production --tag todo-app:prod .
+```
+
+Then to run the image use:
+
+```bash
+$ docker run --env-file .env -p 8000:8000 todo-app:dev
+```
+(Replacing dev with prod as appropriate)
+
+
+Now visit [`http://localhost:8000/`](http://localhost:8000/) in your web browser to view the app.
